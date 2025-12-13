@@ -1,0 +1,1687 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SillyTavern 年度总结</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        @import url("https://fontsapi.zeoseven.com/4/main/result.css");
+        @import url("https://fontsapi.zeoseven.com/309/main/result.css");
+
+        :root {
+            /* 默认配色：泛黄旧纸 */
+            --bg-color: #f4f1ea;
+            --paper-texture: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPgo8cmVjdCB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSIjZjRmMWVhIi8+CjxyZWN0IHdpZHRoPSIxIiBoZWlnaHQ9IjEiIGZpbGw9IiNjYmM4YjkiIG9wYWNpdHk9IjAuMiIvPgo8L3N2Zz4=');
+            --text-color: #2c2c2c;
+            --accent-color: #8b4513;
+            --border-color: #dcd6cc;
+            --font-family: "KingHwaOldSong", "Songti SC", "Noto Serif SC", "SimSun", serif;
+            --shadow-color: rgba(0,0,0,0.5);
+            --highlight-bg: rgba(255,255,255,0.1);
+        }
+
+        /* 配色方案类 */
+        body.theme-white {
+            --bg-color: #fdfdfd;
+            --paper-texture: none;
+            --text-color: #333;
+            --accent-color: #4a6fa5;
+            --border-color: #eee;
+            --shadow-color: rgba(0,0,0,0.3);
+            --highlight-bg: rgba(74,111,165,0.05);
+        }
+        
+        body.theme-pink {
+            --bg-color: #fff0f5;
+            --paper-texture: none;
+            --text-color: #5d3a43;
+            --accent-color: #d67b93;
+            --border-color: #f3dce2;
+            --shadow-color: rgba(214,123,147,0.3);
+            --highlight-bg: rgba(214,123,147,0.08);
+        }
+
+        /* 宇宙星 - 深邃黑金配色 */
+        body.theme-宇宙星 {
+            --bg-color: #0a0a0a;
+            --paper-texture: none;
+            --text-color: #d4af37;
+            --accent-color: #ffd700;
+            --border-color: #333333;
+            --shadow-color: rgba(212,175,55,0.4);
+            --highlight-bg: rgba(212,175,55,0.08);
+        }
+
+        /* 恋爱通告 - 浪漫粉蓝配色 */
+        body.theme-恋爱通告 {
+            --bg-color: #f5dadc;
+            --paper-texture: none;
+            --text-color: #4a4a4a;
+            --accent-color: #6274ce;
+            --border-color: #e8c4c8;
+            --shadow-color: rgba(98,116,206,0.3);
+            --highlight-bg: rgba(98,116,206,0.08);
+        }
+
+        /* 日影下 - 温柔米灰配色 */
+        body.theme-日影下 {
+            --bg-color: #e8e6e0;
+            --paper-texture: none;
+            --text-color: #5a5a5a;
+            --accent-color: #8a8a8a;
+            --border-color: #d0cec8;
+            --shadow-color: rgba(138,138,138,0.3);
+            --highlight-bg: rgba(138,138,138,0.06);
+        }
+
+        /* 红与黑 - 强烈对比配色 */
+        body.theme-红与黑 {
+            --bg-color: #1a1a1a;
+            --paper-texture: none;
+            --text-color: #ffffff;
+            --accent-color: #d32f2f;
+            --border-color: #4a4a4a;
+            --shadow-color: rgba(211,47,47,0.5);
+            --highlight-bg: rgba(211,47,47,0.12);
+        }
+
+        /* 荆棘海 - 深蓝米黄配色 */
+        body.theme-荆棘海 {
+            --bg-color: #2c3e5a;
+            --paper-texture: none;
+            --text-color: #f5f0e8;
+            --accent-color: #d4c5a0;
+            --border-color: #3f5273;
+            --shadow-color: rgba(212,197,160,0.4);
+            --highlight-bg: rgba(212,197,160,0.12);
+        }
+
+        /* 迷雾蓝 - 暖奶油蓝灰配色 */
+        body.theme-迷雾蓝 {
+            --bg-color: #fdf4e3;
+            --paper-texture: none;
+            --text-color: #4a4a4a;
+            --accent-color: #7c8d99;
+            --border-color: #e8dcc8;
+            --shadow-color: rgba(124,141,153,0.3);
+            --highlight-bg: rgba(124,141,153,0.08);
+        }
+
+        * { 
+            box-sizing: border-box; 
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+        }
+
+        body {
+            margin: 0;
+            padding: 20px;
+            background: #e0e0e0;
+            font-family: var(--font-family);
+            font-weight: normal;
+            font-feature-settings: "hwid"; /* 启用等宽变化字形 */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* 生成图片时的特殊样式 */
+        body.generating-image {
+            overflow: hidden;
+        }
+
+        body.generating-image #paper-container::before {
+            content: none !important;
+            display: none !important;
+            background-image: none !important;
+            filter: none !important;
+        }
+
+        /* 生成图片时进一步压缩底部空间 */
+        body.generating-image .generated-url {
+            margin-top: 10px !important;
+            margin-bottom: 0 !important;
+        }
+
+        body.generating-image #paper-container {
+            box-shadow: none !important;
+            animation: none !important;
+            transform: none !important;
+            margin: 0 !important;
+            padding-bottom: 10px !important; /* 极致压缩底部 */
+        }
+
+        /* 生成图片时隐藏所有交互元素 */
+        body.generating-image .controls,
+        body.generating-image .menu-toggle,
+        body.generating-image .delete-btn,
+        body.generating-image .delete-img-btn,
+        body.generating-image .restore-tag,
+        body.generating-image .restore-img-btn,
+        body.generating-image .copyright-watermark,
+        body.generating-image #toast {
+            display: none !important;
+        }
+
+        /* 生成图片时隐藏输入框边框 */
+        body.generating-image .input-line,
+        body.generating-image .textarea-box {
+            border-color: transparent;
+            border-bottom: 2px dashed var(--text-color); /* 仅保留下划线 */
+            background: transparent;
+            box-shadow: none;
+            resize: none;
+        }
+
+        body.generating-image .textarea-box {
+            border: 2px dashed transparent; 
+        }
+
+        /* 生成时的文本替身样式 */
+        .print-text-replacement {
+            font-family: inherit;
+            color: inherit;
+            line-height: inherit;
+            letter-spacing: inherit;
+            font-weight: inherit;
+            white-space: pre-wrap;
+            word-break: break-word;
+            border-bottom: 2px dashed var(--text-color); /* 保持下划线风格 */
+            min-height: 1.5em;
+        }
+
+        /* 版权水印 */
+        .copyright-watermark {
+            position: fixed;
+            bottom: 15px;
+            right: 15px;
+            font-family: "JinzisheTongyuan", serif;
+            font-size: 12px;
+            color: #999;
+            z-index: 0; /* 位于主体内容(z-index:1)之下，滚动时会被遮挡 */
+            pointer-events: none; /* 容器本身透传 */
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .watermark-text {
+            opacity: 0.6;
+            text-shadow: 1px 1px 2px rgba(255,255,255,0.8);
+        }
+
+        .github-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #999;
+            opacity: 0.4;
+            transition: all 0.3s ease;
+            pointer-events: auto; /* 链接需要可点击 */
+            text-decoration: none;
+        }
+
+        .github-link svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        .github-link:hover {
+            opacity: 1;
+            color: #333;
+            transform: scale(1.1) rotate(360deg);
+        }
+
+        /* 菜单切换按钮 */
+        .menu-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 44px;
+            height: 44px;
+            background: white;
+            border-radius: 50%;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 101;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-size: 20px;
+            border: 2px solid #fff;
+        }
+        
+        .menu-toggle:hover {
+            transform: scale(1.1);
+        }
+
+        .menu-toggle.active {
+            transform: rotate(45deg);
+            background: #333;
+            color: white;
+            border-color: #333;
+        }
+
+        /* 控制栏 */
+        .controls {
+            position: fixed;
+            top: 75px;
+            right: 20px;
+            background: rgba(253, 253, 253, 0.96);
+            padding: 24px;
+            border-radius: 4px; /* 小圆角，更显纸质感 */
+            box-shadow: 0 4px 24px rgba(0,0,0,0.06), 0 1px 4px rgba(0,0,0,0.04);
+            border: 1px solid #eaeae5;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            backdrop-filter: blur(8px);
+            max-width: 260px;
+            max-height: 85vh;
+            overflow-y: auto;
+            font-family: var(--font-family); /* 统一字体 */
+            
+            /* 默认收起状态 */
+            opacity: 0;
+            visibility: hidden;
+            transform: translateX(20px);
+            transition: all 0.4s cubic-bezier(0.2, 0, 0, 1);
+        }
+
+        .controls.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(0);
+        }
+
+        .controls-header {
+            font-weight: normal;
+            font-size: 15px;
+            color: #2c2c2c;
+            margin-bottom: 4px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #eee;
+            text-align: center;
+            letter-spacing: 2px;
+        }
+
+        .theme-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 8px 12px;
+            border: 1px solid #dcdcdc;
+            background: #fff;
+            cursor: pointer;
+            border-radius: 2px; /* 微圆角 */
+            font-family: var(--font-family);
+            font-size: 13px;
+            color: #666;
+            transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
+            letter-spacing: 1px;
+            outline: none;
+        }
+        
+        .btn:hover { 
+            border-color: #555;
+            color: #333;
+            background: #fafafa;
+        }
+        
+        /* 选中状态 - 黑色 */
+        .btn.active {
+            background: #2c2c2c;
+            color: #fff;
+            border-color: #2c2c2c;
+        }
+
+        /* 主操作按钮 */
+        .btn-primary { 
+            background: #2c2c2c;
+            color: #f0f0f0;
+            border: 1px solid #2c2c2c;
+            font-size: 14px;
+            padding: 12px 20px;
+            margin-top: 10px;
+            width: 100%;
+        }
+        
+        .btn-primary:hover { 
+            background: #444;
+            border-color: #444;
+            color: #fff;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .btn-primary:disabled {
+            background: #999;
+            border-color: #999;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .theme-section {
+            margin-bottom: 8px;
+        }
+
+        .section-title {
+            font-size: 11px;
+            color: #999;
+            margin-bottom: 10px;
+            font-weight: normal;
+            text-align: center;
+            position: relative;
+        }
+        
+        .section-title::before,
+        .section-title::after {
+            content: "";
+            display: inline-block;
+            width: 20px;
+            height: 1px;
+            background: #eee;
+            vertical-align: middle;
+            margin: 0 8px;
+        }
+
+        /* 自定义编辑器内部样式 */
+        #custom-editor {
+            background: #fdfdfd !important;
+            border: 1px solid #eee;
+            border-radius: 4px !important;
+        }
+
+        /* 纸张容器 */
+        #paper-container {
+            width: 100%;
+            max-width: 400px;
+            background: var(--bg-color);
+            background-image: var(--paper-texture);
+            color: var(--text-color);
+            padding: 40px 25px;
+            box-shadow: 
+                0 20px 60px rgba(0,0,0,0.3),
+                0 10px 30px rgba(0,0,0,0.2),
+                inset 0 0 0 1px rgba(255,255,255,0.1);
+            position: relative;
+            border-radius: 4px;
+            z-index: 1;
+            animation: slideIn 0.8s ease-out;
+            margin-bottom: 40px;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* 模拟纸张噪点质感 */
+        #paper-container::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 0;
+            border-radius: 12px;
+        }
+
+        .content-wrapper {
+            position: relative;
+            z-index: 1; /* 确保内容在噪点之上 */
+        }
+
+        @keyframes sparkle {
+            0%, 100% { opacity: 0.5; transform: rotate(0deg) scale(1); }
+            50% { opacity: 1; transform: rotate(180deg) scale(1.2); }
+        }
+
+        /* 输入区域样式 */
+        .section {
+            margin-bottom: 35px;
+            padding: 20px;
+            background: var(--highlight-bg);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+        }
+
+        .section:last-of-type {
+            margin-bottom: 0;
+        }
+
+        /* 生成图底部网址 */
+        .generated-url {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 10px;
+            color: var(--accent-color);
+            opacity: 0.5;
+            font-family: sans-serif;
+            letter-spacing: 1px;
+        }
+
+        .question-row {
+            margin-bottom: 18px;
+            line-height: 2;
+            font-size: 18px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: baseline;
+        }
+
+        .label {
+            margin-right: 8px;
+            font-weight: 600;
+            color: var(--accent-color);
+            text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+
+        /* 模拟填空下划线 */
+        .input-line {
+            border: none;
+            background: transparent;
+            border-bottom: 2px dashed var(--text-color);
+            color: var(--text-color);
+            font-family: inherit;
+            font-size: 18px;
+            padding: 4px 8px;
+            flex: 1;
+            min-width: 100px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+        
+        .input-line:focus {
+            border-bottom: 2px solid var(--accent-color);
+            background: var(--highlight-bg);
+            transform: translateY(-1px);
+        }
+
+        .input-line:hover {
+            border-bottom-style: solid;
+        }
+
+        /* 多行文本区域 */
+        .textarea-box {
+            width: 100%;
+            border: 2px dashed var(--border-color);
+            background: var(--highlight-bg);
+            padding: 14px;
+            min-height: 80px;
+            font-family: inherit;
+            font-size: 16px;
+            color: var(--text-color);
+            resize: none;
+            outline: none;
+            margin-top: 8px;
+            line-height: 1.8;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            overflow: hidden; /* 隐藏滚动条 */
+        }
+        .textarea-box:focus {
+            border-color: var(--accent-color);
+            border-style: solid;
+            box-shadow: 0 0 0 3px rgba(var(--accent-color), 0.1);
+            background: rgba(255,255,255,0.2);
+        }
+        .textarea-box:hover {
+            border-style: solid;
+        }
+
+        /* 可编辑文本 */
+        .editable-text {
+            border-bottom: 1px dashed var(--accent-color);
+            cursor: pointer;
+            padding: 0 2px;
+            transition: all 0.2s;
+            display: inline-block;
+            min-width: 1em;
+            text-align: center;
+        }
+        .editable-text:hover {
+            background: var(--highlight-bg);
+        }
+        .editable-text:focus {
+            outline: none;
+            border-bottom: 2px solid var(--accent-color);
+            background: rgba(255,255,255,0.5);
+        }
+
+        /* 月份卡片相关 */
+        .month-block {
+            border-left: 4px solid var(--accent-color);
+            padding-left: 24px;
+            margin: 45px 0;
+            padding: 20px 24px;
+            background: var(--highlight-bg);
+            border-radius: 0 12px 12px 0;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .delete-btn {
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            width: 24px;
+            height: 24px;
+            background: #ff6b6b;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 14px;
+            opacity: 0;
+            transition: opacity 0.2s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            z-index: 10;
+        }
+
+        .month-block:hover .delete-btn {
+            opacity: 1;
+        }
+
+        /* 图片删除按钮 */
+        .delete-img-btn {
+            position: absolute;
+            top: -8px;
+            left: -8px;
+            width: 20px;
+            height: 20px;
+            background: #666;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 12px;
+            opacity: 0;
+            transition: opacity 0.2s;
+            z-index: 20;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .polaroid:hover .delete-img-btn {
+            opacity: 1;
+        }
+
+        /* 恢复照片按钮 */
+        .restore-img-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            cursor: pointer;
+            font-size: 12px;
+            color: var(--accent-color);
+            border: 1px dashed var(--accent-color);
+            padding: 4px 8px;
+            border-radius: 4px;
+            opacity: 0.6;
+            transition: all 0.2s;
+            z-index: 5;
+        }
+        .restore-img-btn:hover {
+            opacity: 1;
+            background: rgba(255,255,255,0.5);
+        }
+
+        /* 拍立得照片 */
+        .polaroid {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 100px;
+            height: 120px;
+            background: white;
+            padding: 5px 5px 25px 5px;
+            box-shadow: 2px 4px 8px rgba(0,0,0,0.15);
+            transform: rotate(3deg);
+            transition: transform 0.3s ease;
+            cursor: pointer;
+            z-index: 5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .polaroid:hover {
+            transform: rotate(0deg) scale(1.05);
+            z-index: 10;
+            box-shadow: 4px 8px 16px rgba(0,0,0,0.2);
+        }
+
+        .polaroid-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            background: #f0f0f0;
+        }
+
+        .polaroid-placeholder {
+            font-size: 24px;
+            color: #ccc;
+            text-align: center;
+        }
+
+        .polaroid-placeholder span {
+            display: block;
+            font-size: 10px;
+            margin-top: 5px;
+        }
+
+        /* 顶部/底部信息区 */
+        .summary-header {
+            text-align: center; 
+            margin-bottom: 40px; 
+            border-bottom: 2px dashed var(--accent-color); 
+            padding-bottom: 20px;
+        }
+        
+        .footer-title {
+            font-size: 28px;
+            font-weight: bold;
+            color: var(--accent-color);
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+            border-bottom: 2px solid transparent;
+            display: inline-block;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .footer-title:hover, .footer-title:focus {
+            border-bottom-color: var(--accent-color);
+            background: var(--highlight-bg);
+            outline: none;
+        }
+
+        .maker-info {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            font-size: 16px;
+            color: var(--text-color);
+            align-items: center; /* 改回居中对齐，保证视觉高度一致 */
+        }
+
+        /* 月份管理区域样式优化 */
+        #month-restorer {
+            padding: 5px; 
+            min-height: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            justify-content: center;
+        }
+
+        /* 恢复月份按钮 - 简约风 */
+        .restore-tag {
+            display: inline-block;
+            padding: 4px 10px;
+            background: #fff;
+            border-radius: 2px;
+            font-size: 12px;
+            cursor: pointer;
+            color: #666;
+            border: 1px dashed #ccc;
+            transition: all 0.2s;
+        }
+        .restore-tag:hover {
+            background: #2c2c2c;
+            color: white;
+            border-color: #2c2c2c;
+            border-style: solid;
+        }
+        
+        .textarea-short {
+            min-height: 50px !important;
+        }
+
+        
+        .month-title {
+            font-size: 26px;
+            font-weight: bold;
+            color: var(--accent-color);
+            margin-bottom: 18px;
+            font-family: "KaiTi", "STKaiti", serif;
+            position: relative;
+            display: inline-block;
+        }
+
+        .month-title::after {
+            content: "";
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, var(--accent-color), transparent);
+        }
+
+        .divider {
+            text-align: center;
+            margin: 50px 0;
+            color: var(--accent-color);
+            font-size: 16px;
+            position: relative;
+            font-weight: 500;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            width: 30%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--border-color), transparent);
+        }
+
+        .divider::before { left: 0; }
+        .divider::after { right: 0; }
+
+        /* 底部 */
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 14px;
+            color: var(--text-color);
+            opacity: 0.6;
+            border-top: 2px solid var(--border-color);
+            padding-top: 10px;
+            min-height: 20px;
+        }
+
+        /* 自定义滚动条 */
+        .controls::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .controls::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        
+        .controls::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 10px;
+        }
+        
+        .controls::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+        /* 加载动画 */
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .loading {
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        /* 添加输入焦点时的光标动画 */
+        @keyframes blink {
+            0%, 49% { border-right: 2px solid var(--accent-color); }
+            50%, 100% { border-right: 2px solid transparent; }
+        }
+
+        /* 提示消息 */
+        .toast {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 24px;
+            font-size: 14px;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+
+        .toast.show {
+            opacity: 1;
+        }
+
+        /* 移动端适配 */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            #paper-container { 
+                padding: 30px 20px; 
+                border-radius: 8px;
+            }
+            
+            .question-row { 
+                font-size: 16px; 
+            }
+            
+            .controls { 
+                top: 10px;
+                right: 10px;
+                padding: 12px;
+                max-width: 240px;
+            }
+
+            .theme-grid {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 24px;
+                letter-spacing: 2px;
+            }
+
+            .month-title {
+                font-size: 22px;
+            }
+
+            .section {
+                padding: 15px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .controls {
+                max-width: 200px;
+                padding: 10px;
+            }
+
+            .btn {
+                font-size: 12px;
+                padding: 8px 12px;
+            }
+
+            .controls-header {
+                font-size: 14px;
+            }
+        }
+
+        /* 打印样式 */
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+
+            .controls {
+                display: none !important;
+            }
+
+            #paper-container {
+                box-shadow: none;
+                max-width: 100%;
+            }
+
+            .input-line,
+            .textarea-box {
+                border: none;
+                border-bottom: 1px solid #ccc;
+            }
+        }
+
+        /* 额外装饰效果 */
+        .sparkle {
+            position: fixed;
+            pointer-events: none;
+            animation: sparkleFloat 3s ease-out forwards;
+            z-index: 9999;
+        }
+
+        @keyframes sparkleFloat {
+            0% {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100px) scale(0);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 提示消息 -->
+    <div id="toast" class="toast"></div>
+
+    <!-- 背景水印 -->
+    <div class="copyright-watermark">
+        <a href="https://github.com/Jingshiro/Year-in-ST" target="_blank" class="github-link" title="项目源码">
+            <svg viewBox="0 0 16 16" width="24" height="24" fill="currentColor">
+                <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path>
+            </svg>
+        </a>
+        <div class="watermark-text">
+            Designed by 镜 & Claude & Gemini
+        </div>
+    </div>
+
+    <!-- 菜单切换按钮 -->
+    <div class="menu-toggle" onclick="toggleMenu()" title="打开/关闭主题编辑器">
+        🎨
+    </div>
+
+    <!-- 悬浮控制面板 -->
+    <div class="controls" id="controls-panel" data-html2canvas-ignore="true">
+        <div class="controls-header">主题编辑器</div>
+        
+        <div class="theme-section">
+            <div class="section-title">主题配色</div>
+            <div class="theme-grid">
+                <button class="btn theme-btn" data-theme="theme-宇宙星" onclick="setTheme('theme-宇宙星')">宇宙星</button>
+                <button class="btn theme-btn" data-theme="theme-恋爱通告" onclick="setTheme('theme-恋爱通告')">恋爱通告</button>
+                <button class="btn theme-btn" data-theme="theme-日影下" onclick="setTheme('theme-日影下')">日影下</button>
+                <button class="btn theme-btn" data-theme="theme-红与黑" onclick="setTheme('theme-红与黑')">红与黑</button>
+                <button class="btn theme-btn" data-theme="theme-荆棘海" onclick="setTheme('theme-荆棘海')">荆棘海</button>
+                <button class="btn theme-btn" data-theme="theme-迷雾蓝" onclick="setTheme('theme-迷雾蓝')">迷雾蓝</button>
+            </div>
+        </div>
+
+        <div class="theme-section">
+            <div class="section-title">自定义</div>
+            <div class="theme-grid">
+                <button class="btn" onclick="toggleCustomEditor()">打开调色板</button>
+            </div>
+        </div>
+
+        <div class="theme-section">
+            <div class="section-title">月份管理</div>
+            <div id="month-restorer" style="padding: 5px; min-height: 20px;">
+                <div style="font-size: 12px; color: #999; font-style: italic;">点击已删除的月份可恢复</div>
+                <!-- 动态生成的恢复按钮将放在这里 -->
+            </div>
+        </div>
+
+        <div id="custom-editor" style="display: none; margin-top: 10px; padding: 12px; background: #f9f9f9; border-radius: 8px;">
+            <div style="font-size: 13px; font-weight: 600; margin-bottom: 10px; color: #333;">自定义配色</div>
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <label style="font-size: 12px; width: 70px;">背景色:</label>
+                    <input type="color" id="custom-bg" value="#f4f1ea" style="width: 60px; height: 30px; border: none; border-radius: 4px; cursor: pointer;">
+                </div>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <label style="font-size: 12px; width: 70px;">文字色:</label>
+                    <input type="color" id="custom-text" value="#2c2c2c" style="width: 60px; height: 30px; border: none; border-radius: 4px; cursor: pointer;">
+                </div>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <label style="font-size: 12px; width: 70px;">强调色:</label>
+                    <input type="color" id="custom-accent" value="#8b4513" style="width: 60px; height: 30px; border: none; border-radius: 4px; cursor: pointer;">
+                </div>
+                <button class="btn" onclick="applyCustomTheme()" style="margin-top: 8px; font-size: 12px;">应用配色</button>
+            </div>
+        </div>
+
+        <button class="btn btn-primary" onclick="generateImage()">生成长图</button>
+        <div style="font-size: 11px; color: #999; margin-top: 5px; text-align: center;">
+            快捷键: Ctrl+S<br>
+            <a href="#" onclick="clearAllData(); return false;" style="color: #999; text-decoration: underline; font-size: 10px;">清除所有输入</a>
+        </div>
+    </div>
+
+    <!-- 纸张区域 (将被截图) -->
+    <div id="paper-container">
+        <div class="content-wrapper">
+            <!-- 头部信息 -->
+            <div class="summary-header" style="text-align: center; margin-bottom: 40px; border-bottom: 2px dashed var(--accent-color); padding-bottom: 20px;">
+                <div class="footer-title" contenteditable="true" spellcheck="false" title="点击可修改标题">酒馆2025年度总结</div>
+                <div class="maker-info">
+                    <div>制表人：镜</div>
+                    <div style="display:flex; align-items:baseline;">
+                        填表人：<input type="text" class="input-line" style="width:120px; text-align:center;">
+                    </div>
+                </div>
+            </div>
+
+            <!-- 基础数据 -->
+            <div class="section">
+                <div class="question-row">
+                    玩酒馆已经 <input type="text" class="input-line" placeholder="输入天数" style="text-align:center; width:60px; flex:none;"> 天了
+                </div>
+                <div class="question-row">
+                    今年跟<span id="toggle-amount" class="editable-text" onclick="toggleAmount(this)" style="margin:0 5px; font-weight:bold; color:var(--accent-color);">好多</span>人聊过，Ta们是：
+                </div>
+                <textarea class="textarea-box" placeholder="你还记得他们的名字嘛？"></textarea>
+            </div>
+
+            <!-- 自定义填空 -->
+            <div class="section">
+                <div class="question-row">
+                    <span class="label">玩得最<span class="editable-text" contenteditable="true" spellcheck="false">开心</span>的是：</span>
+                    <input type="text" class="input-line" placeholder="谁？">
+                </div>
+                <div class="question-row">
+                    <span class="label">玩得最<span class="editable-text" contenteditable="true" spellcheck="false">虐心</span>的是：</span>
+                    <input type="text" class="input-line" placeholder="谁？">
+                </div>
+                <div class="question-row">
+                    <span class="label">玩得最<span class="editable-text" contenteditable="true" spellcheck="false">无语</span>的是：</span>
+                    <input type="text" class="input-line" placeholder="谁？">
+                </div>
+                <div class="question-row">
+                    <span class="label">玩得最<span class="editable-text" contenteditable="true" spellcheck="false">刺激</span>的是：</span>
+                    <input type="text" class="input-line" placeholder="又是谁？">
+                </div>
+            </div>
+
+            <div class="divider"> 那么来回顾一下吧！ </div>
+
+            <!-- 12个月份循环生成 -->
+            <div id="months-container">
+                <!-- JS会自动填充这里，避免代码太长 -->
+            </div>
+
+            <div class="divider"> 总结时刻 </div>
+
+            <!-- 结尾 -->
+            <div class="section">
+                <div class="question-row">
+                    <span class="label">玩了这么久，我最喜欢的LLM模型是？</span>
+                </div>
+                <input type="text" class="input-line">
+                
+                <div class="question-row" style="margin-top: 20px;">
+                    <span class="label">聊了这么多，酒馆对我产生最大的影响是？</span>
+                </div>
+                <textarea class="textarea-box" style="min-height: 100px;"></textarea>
+
+                <div class="question-row" style="margin-top: 20px;">
+                    <span class="label">那么，明年还玩吗？</span>
+                    <textarea class="textarea-box" placeholder="我们说好要玩一辈子的酒馆的！（并没有"></textarea>
+                </div>
+
+                <div class="question-row" style="margin-top: 20px;">
+                    <span class="label">也许，还需要嘀嘀咕咕什么？</span>
+                </div>
+                <textarea class="textarea-box" placeholder="聊点什么吧~"></textarea>
+            </div>
+
+            <!-- 生成图底部网址 -->
+            <div class="generated-url">
+                https://jingshiro.github.io/year-in-st
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 显示提示消息
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2500);
+        }
+
+        // 切换 "好多/好少"
+        function toggleAmount(element) {
+            if (element.textContent === '好多') {
+                element.textContent = '好少';
+            } else {
+                element.textContent = '好多';
+            }
+        }
+
+        // 自动生成12个月份的HTML
+        const monthsContainer = document.getElementById('months-container');
+        const monthRestorer = document.getElementById('month-restorer');
+        const monthNames = ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月'];
+
+        // 初始化月份
+        monthNames.forEach((month, index) => {
+            const monthId = `month-${index}`;
+            const monthHtml = `
+                <div class="month-block" id="${monthId}">
+                    <div class="delete-btn" onclick="deleteMonth('${monthId}', '${month}')" title="删除这个月份">×</div>
+                    
+                    <div class="restore-img-btn" id="restore-img-${index}" onclick="restoreImage(${index})" style="display:none;">📷 恢复照片</div>
+
+                    <div class="polaroid" id="polaroid-${index}" onclick="document.getElementById('file-${index}').click()" title="点击上传头像">
+                        <div class="delete-img-btn" onclick="deleteImage(event, ${index})" title="移除照片区域">×</div>
+                        <img id="img-${index}" class="polaroid-img" style="display:none;">
+                        <div class="polaroid-placeholder" id="ph-${index}">
+                            📷
+                            <span>Avatar</span>
+                        </div>
+                        <input type="file" id="file-${index}" accept="image/*" onchange="handleImageUpload(this, ${index})" style="display:none">
+                    </div>
+
+                    <div class="month-title">${month}</div>
+                    <div class="question-row">
+                        <span class="label">代表Char是：</span>
+                        <input type="text" class="input-line" placeholder="Ta的名字...">
+                    </div>
+                    <div class="question-row">
+                        <span class="label">最戳的片段是：</span>
+                    </div>
+                    <textarea class="textarea-box" placeholder="复制粘贴一段聊天记录..."></textarea>
+                    <div class="question-row" style="margin-top:10px;">
+                        <span class="label">User的碎碎念time：</span>
+                    </div>
+                    <textarea class="textarea-box textarea-short" placeholder="当时的心情/吐槽/小作文..." style="height: 60px;"></textarea>
+                </div>
+            `;
+            monthsContainer.insertAdjacentHTML('beforeend', monthHtml);
+        });
+
+        // 删除月份
+        function deleteMonth(id, name) {
+            const el = document.getElementById(id);
+            if (el) {
+                el.style.display = 'none';
+                addRestoreBtn(id, name);
+                showToast(`已隐藏 ${name}`);
+            }
+        }
+
+        // 添加恢复按钮
+        function addRestoreBtn(id, name) {
+            const btn = document.createElement('span');
+            btn.className = 'restore-tag';
+            btn.textContent = `+ ${name}`;
+            btn.onclick = () => restoreMonth(id, btn);
+            monthRestorer.appendChild(btn);
+        }
+
+        // 恢复月份
+        function restoreMonth(id, btnElement) {
+            const el = document.getElementById(id);
+            if (el) {
+                el.style.display = 'block';
+                el.style.animation = 'slideIn 0.5s ease-out';
+                btnElement.remove();
+                showToast(`已恢复月份`);
+            }
+        }
+
+        // 处理图片上传
+        function handleImageUpload(input, index) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = document.getElementById(`img-${index}`);
+                    const ph = document.getElementById(`ph-${index}`);
+                    img.src = e.target.result;
+                    img.style.display = 'block';
+                    ph.style.display = 'none';
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        // 删除图片区域
+        function deleteImage(e, index) {
+            e.stopPropagation(); // 阻止冒泡触发上传
+            const polaroid = document.getElementById(`polaroid-${index}`);
+            const restoreBtn = document.getElementById(`restore-img-${index}`);
+            
+            polaroid.style.display = 'none';
+            restoreBtn.style.display = 'block';
+            
+            showToast('已移除照片区域');
+        }
+
+        // 恢复图片区域
+        function restoreImage(index) {
+            const polaroid = document.getElementById(`polaroid-${index}`);
+            const restoreBtn = document.getElementById(`restore-img-${index}`);
+            
+            polaroid.style.display = 'flex';
+            restoreBtn.style.display = 'none';
+            
+            showToast('已恢复照片区域');
+        }
+
+        // 主题名称映射
+        const themeNames = {
+            'theme-宇宙星': '宇宙星',
+            'theme-恋爱通告': '恋爱通告',
+            'theme-日影下': '日影下',
+            'theme-红与黑': '红与黑',
+            'theme-荆棘海': '荆棘海',
+            'theme-迷雾蓝': '迷雾蓝'
+        };
+
+        // 菜单切换逻辑
+        function toggleMenu() {
+            const controls = document.getElementById('controls-panel');
+            const toggle = document.querySelector('.menu-toggle');
+            controls.classList.toggle('active');
+            toggle.classList.toggle('active');
+        }
+
+        // 切换主题
+        function setTheme(themeName) {
+            // 清除自定义样式
+            const root = document.documentElement;
+            root.style.removeProperty('--bg-color');
+            root.style.removeProperty('--text-color');
+            root.style.removeProperty('--accent-color');
+            root.style.removeProperty('--border-color');
+            root.style.removeProperty('--highlight-bg');
+            root.style.removeProperty('--shadow-color');
+            root.style.removeProperty('--paper-texture');
+
+            document.body.className = themeName === 'default' ? '' : themeName;
+            
+            // 更新按钮激活状态
+            document.querySelectorAll('.theme-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            const activeBtn = document.querySelector(`.theme-btn[data-theme="${themeName}"]`);
+            if (activeBtn) {
+                activeBtn.classList.add('active');
+            }
+            
+            // 关闭自定义编辑器（保持侧边栏打开状态）
+            document.getElementById('custom-editor').style.display = 'none';
+            
+            // 保存主题选择
+            if (themeName !== 'default') {
+                localStorage.setItem('selectedTheme', themeName);
+            }
+            
+            // 显示提示
+            if (themeNames[themeName]) {
+                showToast(`已切换到 ${themeNames[themeName]} 主题`);
+            }
+        }
+
+        // 切换自定义编辑器
+        function toggleCustomEditor() {
+            const editor = document.getElementById('custom-editor');
+            const isVisible = editor.style.display !== 'none';
+            editor.style.display = isVisible ? 'none' : 'block';
+            
+            if (!isVisible) {
+                showToast('进入自定义模式');
+            }
+        }
+
+        // 应用自定义主题
+        function applyCustomTheme() {
+            const bg = document.getElementById('custom-bg').value;
+            const text = document.getElementById('custom-text').value;
+            const accent = document.getElementById('custom-accent').value;
+
+            // 清除预设主题
+            document.body.className = '';
+
+            // 直接修改 CSS 变量
+            const root = document.documentElement;
+            root.style.setProperty('--bg-color', bg);
+            root.style.setProperty('--text-color', text);
+            root.style.setProperty('--accent-color', accent);
+            
+            // 动态计算边框色和高光色
+            const accentRGB = hexToRgb(accent);
+            root.style.setProperty('--border-color', `rgba(${accentRGB.r}, ${accentRGB.g}, ${accentRGB.b}, 0.3)`);
+            root.style.setProperty('--highlight-bg', `rgba(${accentRGB.r}, ${accentRGB.g}, ${accentRGB.b}, 0.08)`);
+            root.style.setProperty('--shadow-color', `rgba(${accentRGB.r}, ${accentRGB.g}, ${accentRGB.b}, 0.3)`);
+            root.style.setProperty('--paper-texture', 'none');
+
+            showToast('自定义主题已应用');
+        }
+
+        // 十六进制颜色转RGB
+        function hexToRgb(hex) {
+            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return result ? {
+                r: parseInt(result[1], 16),
+                g: parseInt(result[2], 16),
+                b: parseInt(result[3], 16)
+            } : { r: 0, g: 0, b: 0 };
+        }
+
+        // 生成图片
+        function generateImage() {
+            const paper = document.getElementById('paper-container');
+            const btn = document.querySelector('.btn-primary');
+            const originalText = btn.innerText;
+            
+            btn.innerText = '生成中...';
+            btn.disabled = true;
+            btn.classList.add('loading');
+
+            // 滚动到顶部
+            window.scrollTo(0, 0);
+            showToast('正在生成长图，请稍候...');
+
+            // 延时执行，确保UI刷新
+            setTimeout(() => {
+                // 1. 准备生成
+                document.body.classList.add('generating-image');
+
+                // 2. 替换输入框为文本
+                const cleanupInputs = replaceInputsWithText();
+
+                // 3. 获取背景色
+                const computedStyle = getComputedStyle(document.body);
+                let bgColor = computedStyle.getPropertyValue('--bg-color').trim();
+                if (!bgColor || bgColor === 'transparent' || bgColor.includes('rgba(0, 0, 0, 0)')) {
+                    bgColor = '#f4f1ea'; 
+                }
+
+                // 3.5 强制设置容器高度为精确内容高度，彻底去除底部空白
+                const urlDiv = paper.querySelector('.generated-url');
+                const contentWrapper = paper.querySelector('.content-wrapper');
+                
+                // 保存原始样式以便恢复
+                const originalPaperHeight = paper.style.height;
+                const originalPaperPaddingBottom = paper.style.paddingBottom;
+                
+                if (urlDiv && contentWrapper) {
+                    // 测量 content-wrapper 内最后一个元素的实际底部位置
+                    const wrapperRect = contentWrapper.getBoundingClientRect();
+                    const urlRect = urlDiv.getBoundingClientRect();
+                    
+                    // 计算内容实际高度 (相对于 content-wrapper)
+                    const contentHeight = urlRect.bottom - wrapperRect.top + 15;
+                    
+                    // 强制设置容器高度为：上padding + 内容高度 + 下padding(10px)
+                    const topPadding = 40;
+                    paper.style.height = (topPadding + contentHeight + 10) + 'px';
+                    paper.style.paddingBottom = '10px';
+                }
+
+                // 等待DOM更新
+                setTimeout(() => {
+                    // 4. 执行截图
+                    html2canvas(paper, {
+                        scale: 2,
+                        useCORS: true,
+                        allowTaint: true,
+                        backgroundColor: bgColor,
+                        logging: false,
+                        removeContainer: true,
+                        imageTimeout: 15000,
+                        ignoreElements: (element) => {
+                            return element.classList && (
+                                element.classList.contains('controls') || 
+                                element.classList.contains('menu-toggle') ||
+                                element.classList.contains('delete-btn') || 
+                                element.classList.contains('delete-img-btn') ||
+                                element.classList.contains('restore-img-btn') ||
+                                element.classList.contains('copyright-watermark') ||
+                                element.id === 'toast'
+                            );
+                        },
+                        width: paper.offsetWidth,
+                        height: paper.offsetHeight,
+                        windowWidth: paper.offsetWidth,
+                        windowHeight: paper.offsetHeight
+                    }).then(canvas => {
+                        try {
+                            const timestamp = new Date().toISOString().slice(0,10).replace(/-/g, '');
+                            canvas.toBlob(function(blob) {
+                                if (!blob) {
+                                    throw new Error('图片生成为空');
+                                }
+                                const link = document.createElement('a');
+                                link.download = `SillyTavern年度总结_${timestamp}.png`;
+                                link.href = URL.createObjectURL(blob);
+                                link.click();
+                                
+                                setTimeout(() => {
+                                    URL.revokeObjectURL(link.href);
+                                }, 100);
+                                
+                                showToast('图片已生成，请查看下载文件夹');
+                            }, 'image/png');
+                        } catch (e) {
+                            console.error('导出失败:', e);
+                            showToast('导出失败，请重试');
+                        }
+                    }).catch(err => {
+                        console.error('生成失败:', err);
+                        showToast('生成失败，可能是图片太大');
+                    }).finally(() => {
+                        // 5. 恢复现场
+                        cleanupInputs();
+                        document.body.classList.remove('generating-image');
+                        
+                        // 恢复容器原始高度
+                        paper.style.height = originalPaperHeight;
+                        paper.style.paddingBottom = originalPaperPaddingBottom;
+                        
+                        btn.innerText = originalText;
+                        btn.disabled = false;
+                        btn.classList.remove('loading');
+                    });
+                }, 100);
+
+            }, 500);
+        }
+
+        // 辅助函数：替换输入框为文本节点
+        function replaceInputsWithText() {
+            const inputs = document.querySelectorAll('input, textarea');
+            const replacements = [];
+
+            inputs.forEach(input => {
+                // 忽略隐藏的 input (如 file input)
+                if (input.style.display === 'none' || input.type === 'file' || input.type === 'hidden') return;
+
+                const style = getComputedStyle(input);
+                const rect = input.getBoundingClientRect();
+                const text = input.value;
+
+                // 创建替身元素
+                const div = document.createElement('div');
+                div.textContent = text;
+                div.className = 'print-text-replacement'; // 应用基础打印样式
+
+                // 复制关键样式
+                div.style.width = rect.width + 'px'; // 强制同宽
+                div.style.minHeight = rect.height + 'px'; // 强制同高
+                
+                // 字体样式
+                div.style.fontFamily = style.fontFamily;
+                div.style.fontSize = style.fontSize;
+                div.style.fontWeight = style.fontWeight;
+                div.style.color = style.color;
+                div.style.textAlign = style.textAlign;
+                
+                // 布局样式
+                div.style.padding = style.padding;
+                div.style.margin = style.margin;
+                div.style.display = style.display === 'inline-block' ? 'inline-block' : 'block';
+                
+                // 特殊处理 input 的垂直居中
+                if (input.tagName === 'INPUT') {
+                    div.style.display = 'flex';
+                    div.style.alignItems = 'center';
+                    // 对齐方式转换
+                    if (style.textAlign === 'center') div.style.justifyContent = 'center';
+                    else if (style.textAlign === 'right') div.style.justifyContent = 'flex-end';
+                    else div.style.justifyContent = 'flex-start';
+                }
+
+                // 插入替身，隐藏真身
+                input.parentNode.insertBefore(div, input);
+                input.style.display = 'none';
+
+                replacements.push({ input, div });
+            });
+
+            // 同时也处理 contenteditable 元素，移除编辑属性，防止光标出现
+            const editables = document.querySelectorAll('[contenteditable]');
+            editables.forEach(el => {
+                el.setAttribute('data-was-editable', 'true');
+                el.removeAttribute('contenteditable');
+            });
+
+            // 返回清理函数
+            return () => {
+                replacements.forEach(({ input, div }) => {
+                    div.remove();
+                    input.style.display = ''; // 恢复默认 display
+                });
+                
+                editables.forEach(el => {
+                    if (el.getAttribute('data-was-editable')) {
+                        el.setAttribute('contenteditable', 'true');
+                        el.removeAttribute('data-was-editable');
+                    }
+                });
+            };
+        }
+
+        // 页面加载完成后的初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 恢复上次选择的主题
+            const savedTheme = localStorage.getItem('selectedTheme');
+            if (savedTheme) {
+                setTheme(savedTheme);
+            }
+            
+            // 恢复 "好多/好少" 状态
+            const savedAmount = localStorage.getItem('toggle_amount');
+            if (savedAmount) {
+                document.getElementById('toggle-amount').textContent = savedAmount;
+            }
+
+            // 监听 "好多/好少" 变化
+            document.getElementById('toggle-amount').addEventListener('click', function() {
+                // 延时一点等待文字变化
+                setTimeout(() => {
+                    localStorage.setItem('toggle_amount', this.textContent);
+                }, 0);
+            });
+
+            // 添加输入框的保存功能（使用localStorage）
+            const inputs = document.querySelectorAll('.input-line, .textarea-box');
+            
+            inputs.forEach((input, index) => {
+                const savedValue = localStorage.getItem(`input_${index}`);
+                if (savedValue) {
+                    input.value = savedValue;
+                }
+                input.addEventListener('input', function() {
+                    localStorage.setItem(`input_${index}`, this.value);
+                });
+            });
+
+            // 可编辑文本的保存功能
+            const editables = document.querySelectorAll('[contenteditable]');
+            editables.forEach((el, index) => {
+                // 为每个contenteditable元素生成唯一ID（如果已存在ID则使用，否则生成）
+                // 这里我们简单地用类名+索引或特定ID来区分
+                let storageKey;
+                if (el.classList.contains('footer-title')) {
+                    storageKey = 'custom_footer_title';
+                } else {
+                    storageKey = `editable_${index}`;
+                }
+
+                const savedText = localStorage.getItem(storageKey);
+                if (savedText) {
+                    el.textContent = savedText;
+                }
+                
+                el.addEventListener('input', function() {
+                    localStorage.setItem(storageKey, this.textContent);
+                });
+            });
+
+            // 显示欢迎提示
+            setTimeout(() => {
+                showToast('欢迎使用年度总结生成器');
+            }, 500);
+
+            // 为输入框添加动画效果
+            inputs.forEach(input => {
+                input.addEventListener('focus', function() {
+                    this.style.transform = 'scale(1.02)';
+                });
+                input.addEventListener('blur', function() {
+                    this.style.transform = 'scale(1)';
+                });
+            });
+        });
+
+        // 清除所有输入数据
+        function clearAllData() {
+            if (confirm('确定要清除所有输入内容吗？此操作不可恢复！')) {
+                // 清除localStorage
+                localStorage.clear();
+                
+                // 清除所有输入框
+                const inputs = document.querySelectorAll('.input-line, .textarea-box, [contenteditable]');
+                inputs.forEach(input => {
+                    if (input.tagName === 'INPUT' || input.tagName === 'TEXTAREA') {
+                        input.value = '';
+                    } else {
+                        // 重置可编辑文本为默认值
+                        if (input.classList.contains('footer-title')) {
+                            input.textContent = '酒馆妹年度总结';
+                        } else {
+                            // 其他可编辑span重置为空或者保留原样？这里简单重置为空或默认提示可能比较难判断，暂不处理内容清空，只清空存储
+                            // 或者根据需求清空
+                        }
+                    }
+                });
+
+                // 重置 "好多/好少"
+                document.getElementById('toggle-amount').textContent = '好多';
+
+                // 重置图片
+                document.querySelectorAll('.polaroid-img').forEach(img => {
+                    img.src = '';
+                    img.style.display = 'none';
+                });
+                document.querySelectorAll('.polaroid-placeholder').forEach(ph => {
+                    ph.style.display = 'block';
+                });
+                
+                // 重置已删除的月份
+                monthRestorer.innerHTML = '';
+                document.querySelectorAll('.month-block').forEach(el => {
+                    el.style.display = 'block';
+                });
+
+                showToast('已清除所有输入内容');
+            }
+        }
+
+        // 添加键盘快捷键
+        document.addEventListener('keydown', function(e) {
+            // Ctrl/Cmd + S 保存图片
+            if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+                e.preventDefault();
+                generateImage();
+            }
+        });
+    </script>
+</body>
+</html>
