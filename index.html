@@ -1392,93 +1392,59 @@
                     bgColor = '#f4f1ea'; 
                 }
 
-                // 3.5 强制设置容器高度为精确内容高度，彻底去除底部空白
-                const urlDiv = paper.querySelector('.generated-url');
-                const contentWrapper = paper.querySelector('.content-wrapper');
-                
-                // 保存原始样式以便恢复
-                const originalPaperHeight = paper.style.height;
-                const originalPaperPaddingBottom = paper.style.paddingBottom;
-                
-                if (urlDiv && contentWrapper) {
-                    // 测量 content-wrapper 内最后一个元素的实际底部位置
-                    const wrapperRect = contentWrapper.getBoundingClientRect();
-                    const urlRect = urlDiv.getBoundingClientRect();
+                // 4. 执行截图
+                html2canvas(paper, {
+                    scale: 2,
+                    useCORS: true,
+                    allowTaint: true,
+                    backgroundColor: bgColor,
+                    logging: false,
+                    removeContainer: true,
+                    imageTimeout: 15000,
+                    ignoreElements: (element) => {
+                        return element.classList && (
+                            element.classList.contains('controls') || 
+                            element.classList.contains('menu-toggle') ||
+                            element.classList.contains('delete-btn') || 
+                            element.classList.contains('delete-img-btn') ||
+                            element.classList.contains('restore-img-btn') ||
+                            element.classList.contains('copyright-watermark') ||
+                            element.id === 'toast'
+                        );
+                    }
+                }).then(canvas => {
+                    try {
+                        const timestamp = new Date().toISOString().slice(0,10).replace(/-/g, '');
+                        canvas.toBlob(function(blob) {
+                            if (!blob) {
+                                throw new Error('图片生成为空');
+                            }
+                            const link = document.createElement('a');
+                            link.download = `SillyTavern年度总结_${timestamp}.png`;
+                            link.href = URL.createObjectURL(blob);
+                            link.click();
+                            
+                            setTimeout(() => {
+                                URL.revokeObjectURL(link.href);
+                            }, 100);
+                            
+                            showToast('图片已生成，请查看下载文件夹');
+                        }, 'image/png');
+                    } catch (e) {
+                        console.error('导出失败:', e);
+                        showToast('导出失败，请重试');
+                    }
+                }).catch(err => {
+                    console.error('生成失败:', err);
+                    showToast('生成失败，可能是图片太大');
+                }).finally(() => {
+                    cleanupInputs();
+                    document.body.classList.remove('generating-image');
                     
-                    // 计算内容实际高度 (相对于 content-wrapper)
-                    const contentHeight = urlRect.bottom - wrapperRect.top + 15;
-                    
-                    // 强制设置容器高度为：上padding + 内容高度 + 下padding(10px)
-                    const topPadding = 40;
-                    paper.style.height = (topPadding + contentHeight + 10) + 'px';
-                    paper.style.paddingBottom = '10px';
-                }
-
-                // 等待DOM更新
-                setTimeout(() => {
-                    // 4. 执行截图
-                    html2canvas(paper, {
-                        scale: 2,
-                        useCORS: true,
-                        allowTaint: true,
-                        backgroundColor: bgColor,
-                        logging: false,
-                        removeContainer: true,
-                        imageTimeout: 15000,
-                        ignoreElements: (element) => {
-                            return element.classList && (
-                                element.classList.contains('controls') || 
-                                element.classList.contains('menu-toggle') ||
-                                element.classList.contains('delete-btn') || 
-                                element.classList.contains('delete-img-btn') ||
-                                element.classList.contains('restore-img-btn') ||
-                                element.classList.contains('copyright-watermark') ||
-                                element.id === 'toast'
-                            );
-                        },
-                        width: paper.offsetWidth,
-                        height: paper.offsetHeight,
-                        windowWidth: paper.offsetWidth,
-                        windowHeight: paper.offsetHeight
-                    }).then(canvas => {
-                        try {
-                            const timestamp = new Date().toISOString().slice(0,10).replace(/-/g, '');
-                            canvas.toBlob(function(blob) {
-                                if (!blob) {
-                                    throw new Error('图片生成为空');
-                                }
-                                const link = document.createElement('a');
-                                link.download = `SillyTavern年度总结_${timestamp}.png`;
-                                link.href = URL.createObjectURL(blob);
-                                link.click();
-                                
-                                setTimeout(() => {
-                                    URL.revokeObjectURL(link.href);
-                                }, 100);
-                                
-                                showToast('图片已生成，请查看下载文件夹');
-                            }, 'image/png');
-                        } catch (e) {
-                            console.error('导出失败:', e);
-                            showToast('导出失败，请重试');
-                        }
-                    }).catch(err => {
-                        console.error('生成失败:', err);
-                        showToast('生成失败，可能是图片太大');
-                    }).finally(() => {
-                        // 5. 恢复现场
-                        cleanupInputs();
-                        document.body.classList.remove('generating-image');
-                        
-                        // 恢复容器原始高度
-                        paper.style.height = originalPaperHeight;
-                        paper.style.paddingBottom = originalPaperPaddingBottom;
-                        
-                        btn.innerText = originalText;
-                        btn.disabled = false;
-                        btn.classList.remove('loading');
-                    });
-                }, 100);
+                    btn.innerText = originalText;
+                    btn.disabled = false;
+                    btn.classList.remove('loading');
+                });
 
             }, 500);
         }
