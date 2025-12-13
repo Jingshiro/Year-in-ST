@@ -674,8 +674,6 @@
             background-size: cover;
             background-position: center center;
             background-repeat: no-repeat;
-            image-rendering: -webkit-optimize-contrast;
-            image-rendering: crisp-edges;
         }
 
         .polaroid:hover {
@@ -1409,7 +1407,7 @@
 
                 // 4. 执行截图
                 html2canvas(paper, {
-                    scale: 3,
+                    scale: 2,
                     useCORS: true,
                     allowTaint: true,
                     backgroundColor: bgColor,
