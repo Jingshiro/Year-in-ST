@@ -665,18 +665,21 @@
             justify-content: center;
             overflow: hidden;
         }
+        
+        /* 拍立得内部图片容器 - 使用背景图以确保 html2canvas 正确渲染 */
+        .polaroid-image-container {
+            width: 90px;
+            height: 90px;
+            background-color: #f0f0f0;
+            background-size: cover;
+            background-position: center center;
+            background-repeat: no-repeat;
+        }
 
         .polaroid:hover {
             transform: rotate(0deg) scale(1.05);
             z-index: 10;
             box-shadow: 4px 8px 16px rgba(0,0,0,0.2);
-        }
-
-        .polaroid-img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            background: #f0f0f0;
         }
 
         .polaroid-placeholder {
@@ -1168,7 +1171,7 @@
 
                     <div class="polaroid" id="polaroid-${index}" onclick="document.getElementById('file-${index}').click()" title="点击上传头像">
                         <div class="delete-img-btn" onclick="deleteImage(event, ${index})" title="移除照片区域">×</div>
-                        <img id="img-${index}" class="polaroid-img" style="display:none;">
+                        <div id="img-container-${index}" class="polaroid-image-container" style="display:none;"></div>
                         <div class="polaroid-placeholder" id="ph-${index}">
                             📷
                             <span>Avatar</span>
@@ -1229,11 +1232,16 @@
             if (input.files && input.files[0]) {
                 const reader = new FileReader();
                 reader.onload = function(e) {
-                    const img = document.getElementById(`img-${index}`);
+                    const imgContainer = document.getElementById(`img-container-${index}`);
                     const ph = document.getElementById(`ph-${index}`);
-                    img.src = e.target.result;
-                    img.style.display = 'block';
+                    
+                    // 使用背景图而不是img标签，确保html2canvas正确渲染
+                    imgContainer.style.backgroundImage = `url(${e.target.result})`;
+                    imgContainer.style.display = 'block';
                     ph.style.display = 'none';
+                    
+                    // 保存图片数据到localStorage
+                    localStorage.setItem(`avatar_${index}`, e.target.result);
                 };
                 reader.readAsDataURL(input.files[0]);
             }
@@ -1247,6 +1255,11 @@
             
             polaroid.style.display = 'none';
             restoreBtn.style.display = 'block';
+            
+            // 清除图片数据
+            const imgContainer = document.getElementById(`img-container-${index}`);
+            imgContainer.style.backgroundImage = '';
+            localStorage.removeItem(`avatar_${index}`);
             
             showToast('已移除照片区域');
         }
@@ -1580,6 +1593,20 @@
                 });
             });
 
+            // 恢复保存的头像
+            for (let i = 0; i < 12; i++) {
+                const savedAvatar = localStorage.getItem(`avatar_${i}`);
+                if (savedAvatar) {
+                    const imgContainer = document.getElementById(`img-container-${i}`);
+                    const ph = document.getElementById(`ph-${i}`);
+                    if (imgContainer && ph) {
+                        imgContainer.style.backgroundImage = `url(${savedAvatar})`;
+                        imgContainer.style.display = 'block';
+                        ph.style.display = 'none';
+                    }
+                }
+            }
+
             // 显示欢迎提示
             setTimeout(() => {
                 showToast('欢迎使用年度总结生成器');
@@ -1622,9 +1649,9 @@
                 document.getElementById('toggle-amount').textContent = '好多';
 
                 // 重置图片
-                document.querySelectorAll('.polaroid-img').forEach(img => {
-                    img.src = '';
-                    img.style.display = 'none';
+                document.querySelectorAll('.polaroid-image-container').forEach(container => {
+                    container.style.backgroundImage = '';
+                    container.style.display = 'none';
                 });
                 document.querySelectorAll('.polaroid-placeholder').forEach(ph => {
                     ph.style.display = 'block';
