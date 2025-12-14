@@ -167,17 +167,18 @@
         }
 
         /* 生成图片时隐藏输入框边框 */
-        body.generating-image .input-line,
-        body.generating-image .textarea-box {
+        body.generating-image .input-line {
             border-color: transparent;
             border-bottom: 2px dashed var(--text-color); /* 仅保留下划线 */
             background: transparent;
             box-shadow: none;
-            resize: none;
         }
 
         body.generating-image .textarea-box {
-            border: 2px dashed transparent; 
+            border: 2px dashed var(--text-color); /* 保留完整虚线边框 */
+            background: transparent;
+            box-shadow: none;
+            resize: none;
         }
 
         /* 生成时的文本替身样式 */
@@ -455,8 +456,8 @@
 
         /* 输入区域样式 */
         .section {
-            margin-bottom: 35px;
-            padding: 20px;
+            margin-bottom: 25px;
+            padding: 15px;
             background: var(--highlight-bg);
             border-radius: 12px;
             border: 1px solid var(--border-color);
@@ -478,8 +479,8 @@
         }
 
         .question-row {
-            margin-bottom: 18px;
-            line-height: 2;
+            margin-bottom: 12px;
+            line-height: 1.8;
             font-size: 18px;
             display: flex;
             flex-wrap: wrap;
@@ -523,14 +524,14 @@
             width: 100%;
             border: 2px dashed var(--border-color);
             background: var(--highlight-bg);
-            padding: 14px;
+            padding: 10px;
             min-height: 80px;
             font-family: inherit;
-            font-size: 16px;
+            font-size: 14px;
             color: var(--text-color);
             resize: none;
             outline: none;
-            margin-top: 8px;
+            margin-top: 5px;
             line-height: 1.8;
             border-radius: 8px;
             transition: all 0.3s ease;
@@ -569,8 +570,8 @@
         .month-block {
             border-left: 4px solid var(--accent-color);
             padding-left: 24px;
-            margin: 45px 0;
-            padding: 20px 24px;
+            margin: 30px 0;
+            padding: 15px 20px;
             background: var(--highlight-bg);
             border-radius: 0 12px 12px 0;
             position: relative;
@@ -697,16 +698,16 @@
         /* 顶部/底部信息区 */
         .summary-header {
             text-align: center; 
-            margin-bottom: 40px; 
+            margin-bottom: 30px; 
             border-bottom: 2px dashed var(--accent-color); 
-            padding-bottom: 20px;
+            padding-bottom: 15px;
         }
         
         .footer-title {
             font-size: 28px;
             font-weight: bold;
             color: var(--accent-color);
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             letter-spacing: 2px;
             border-bottom: 2px solid transparent;
             display: inline-block;
@@ -763,11 +764,20 @@
         }
 
         
+        .month-title-wrapper {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 12px;
+        }
+
+        .month-title-wrapper:hover .delete-img-btn {
+            opacity: 1;
+        }
+
         .month-title {
             font-size: 26px;
             font-weight: bold;
             color: var(--accent-color);
-            margin-bottom: 18px;
             font-family: "KaiTi", "STKaiti", serif;
             position: relative;
             display: inline-block;
@@ -785,7 +795,7 @@
 
         .divider {
             text-align: center;
-            margin: 50px 0;
+            margin: 35px 0;
             color: var(--accent-color);
             font-size: 16px;
             position: relative;
@@ -1087,7 +1097,7 @@
                     <input type="text" class="input-line" placeholder="谁？">
                 </div>
                 <div class="question-row">
-                    <span class="label">玩得最<span class="editable-text" contenteditable="true" spellcheck="false">无语</span>的是：</span>
+                    <span class="label">玩得最<span class="editable-text" contenteditable="true" spellcheck="false">酸爽</span>的是：</span>
                     <input type="text" class="input-line" placeholder="谁？">
                 </div>
                 <div class="question-row">
@@ -1108,7 +1118,7 @@
             <!-- 结尾 -->
             <div class="section">
                 <div class="question-row">
-                    <span class="label">玩了这么久，我最喜欢的 LLM 模型是？</span>
+                    <span class="label">玩了这么久，我最喜欢的 AI  模型是？</span>
                 </div>
                 <input type="text" class="input-line">
                 
@@ -1168,6 +1178,7 @@
                     <div class="delete-btn" onclick="deleteMonth('${monthId}', '${month}')" title="删除这个月份">×</div>
                     
                     <div class="restore-img-btn" id="restore-img-${index}" onclick="restoreImage(${index})" style="display:none;">📷 恢复照片</div>
+                    <div class="restore-img-btn" id="restore-month-title-${index}" onclick="restoreMonthTitle(${index})" style="display:none;">📅 恢复月份</div>
 
                     <div class="polaroid" id="polaroid-${index}" onclick="document.getElementById('file-${index}').click()" title="点击上传头像">
                         <div class="delete-img-btn" onclick="deleteImage(event, ${index})" title="移除照片区域">×</div>
@@ -1179,7 +1190,10 @@
                         <input type="file" id="file-${index}" accept="image/*" onchange="handleImageUpload(this, ${index})" style="display:none">
                     </div>
 
-                    <div class="month-title">${month}</div>
+                    <div class="month-title-wrapper" id="month-title-wrapper-${index}" style="position: relative; display: inline-block;">
+                        <div class="delete-img-btn" onclick="deleteMonthTitle(event, ${index})" title="移除月份标题" style="position: absolute; top: -8px; left: -8px;">×</div>
+                        <div class="month-title" id="month-title-${index}">${month}</div>
+                    </div>
                     <div class="question-row">
                         <span class="label">代表Char是：</span>
                         <input type="text" class="input-line" placeholder="Ta的名字...">
@@ -1273,6 +1287,29 @@
             restoreBtn.style.display = 'none';
             
             showToast('已恢复照片区域');
+        }
+
+        // 删除月份标题
+        function deleteMonthTitle(e, index) {
+            e.stopPropagation(); // 阻止事件冒泡
+            const monthTitleWrapper = document.getElementById(`month-title-wrapper-${index}`);
+            const restoreBtn = document.getElementById(`restore-month-title-${index}`);
+            
+            monthTitleWrapper.style.display = 'none';
+            restoreBtn.style.display = 'block';
+            
+            showToast('已移除月份标题');
+        }
+
+        // 恢复月份标题
+        function restoreMonthTitle(index) {
+            const monthTitleWrapper = document.getElementById(`month-title-wrapper-${index}`);
+            const restoreBtn = document.getElementById(`restore-month-title-${index}`);
+            
+            monthTitleWrapper.style.display = 'inline-block';
+            restoreBtn.style.display = 'none';
+            
+            showToast('已恢复月份标题');
         }
 
         // 主题名称映射
@@ -1510,6 +1547,15 @@
                     if (style.textAlign === 'center') div.style.justifyContent = 'center';
                     else if (style.textAlign === 'right') div.style.justifyContent = 'flex-end';
                     else div.style.justifyContent = 'flex-start';
+                }
+                
+                // 特殊处理 textarea 的完整虚线边框
+                if (input.tagName === 'TEXTAREA') {
+                    // 获取实际的 CSS 变量值
+                    const computedTextColor = getComputedStyle(document.documentElement).getPropertyValue('--text-color').trim();
+                    div.style.border = `2px dashed ${computedTextColor}`;
+                    div.style.borderRadius = style.borderRadius;
+                    div.style.borderBottom = `2px dashed ${computedTextColor}`; // 覆盖 print-text-replacement 的 border-bottom
                 }
 
                 // 插入替身，隐藏真身
